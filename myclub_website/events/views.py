@@ -6,7 +6,14 @@ from datetime import datetime
 from .models import Event, Venue
 from .forms import VenueForms, EventForm
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 
+
+def delete_venue(request: HttpRequest, venue_id):
+    venue = Venue.objects.get(pk=venue_id)
+    venue.delete()
+
+    return redirect('venue-list')
 
 def delete_event(request: HttpRequest, event_id):
     event = Event.objects.get(pk=event_id)
@@ -78,7 +85,9 @@ def show_venue(requet: HttpRequest, venue_id: int):
 
 
 def list_venues(request: HttpRequest):
-    all_venues = Venue.objects.all()
+    # order by randomly
+    # ?
+    all_venues = Venue.objects.all().order_by('-id')
     
     return render(request, 'events/venues.html', {
         'venue_list': all_venues
@@ -102,7 +111,7 @@ def add_venue(request: HttpRequest):
 
 def all_events(request: HttpRequest):
     """event list"""
-    event_list = Event.objects.all()
+    event_list = Event.objects.all().order_by('event_date')
 
     return render(request, 'events/event_list.html', {
         "event_list": event_list
