@@ -8,6 +8,49 @@ from .forms import VenueForms, EventForm
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 import csv
+# pdf lib
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+
+def venue_pdf(request: HttpRequest):
+    # create byte stream buffer
+    buf = io.BytesIO()
+    # create canvas
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    # create text object
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica", 14)
+
+    # add some lines of text
+    venues = Venue.objects.all()
+    lines = []
+    for (indx, venue) in enumerate(venues):
+        lines.append(str(indx+1))
+        lines.append(venue.name)
+        lines.append(venue.address)
+        lines.append(venue.zip_code)
+        lines.append(venue.phone)
+        lines.append(venue.web)
+        lines.append(venue.email_address)
+        lines.append("==========================")
+
+
+    #loop
+    for line in lines:
+        textob.textLine(line)
+
+    # finishing up
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+
+    # return response
+    return FileResponse(buf, as_attachment=True, filename='venue.pdf')
 
 
 def venue_csv(request: HttpRequest):
