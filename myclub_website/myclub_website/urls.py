@@ -6,3 +6,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('events.urls'))
 ]
+
+# Configure admin titles
+admin.site.site_header = "My Club admin page"
+admin.site.site_title = "Browser Title"
+# admin.site.index_title = "Welcome to admin"
+admin.site.index_title = ""
