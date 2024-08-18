@@ -14,6 +14,10 @@ import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+# ends pdf lib
+
+# pagination
+from django.core.paginator import Paginator
 
 def venue_pdf(request: HttpRequest):
     # create byte stream buffer
@@ -171,10 +175,19 @@ def show_venue(requet: HttpRequest, venue_id: int):
 def list_venues(request: HttpRequest):
     # order by randomly
     # ?
-    all_venues = Venue.objects.all().order_by('-id')
+    # all_venues = Venue.objects.all().order_by('?')
+    all_venues = Venue.objects.all()
+
+    # setup pagination
+    p = Paginator(Venue.objects.all(), 2)
+    page = request.GET.get('page')
+    venues = p.get_page(page)
+    nums = 'a' * venues.paginator.num_pages
 
     return render(request, 'events/venues.html', {
-        'venue_list': all_venues
+        'venue_list': all_venues,
+        'venues': venues,
+        'nums': nums
     })
 
 
