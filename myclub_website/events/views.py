@@ -9,6 +9,20 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 
 
+def venue_text(request: HttpRequest):
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=venues.txt'
+
+    # designate the model
+    venues = Venue.objects.all()
+    lines = []
+    for (indx, venue) in enumerate(venues):
+        lines.append(f"\n\n{indx+1}. {venue.name}\n{venue.address}\n{venue.zip_code}\n{venue.web}\n{venue.email_address}")
+
+    # write to text files
+    response.writelines(lines)
+    return response
+
 def delete_venue(request: HttpRequest, venue_id):
     venue = Venue.objects.get(pk=venue_id)
     venue.delete()
