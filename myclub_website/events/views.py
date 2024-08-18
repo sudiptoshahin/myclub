@@ -7,6 +7,27 @@ from .models import Event, Venue
 from .forms import VenueForms, EventForm
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
+import csv
+
+
+def venue_csv(request: HttpRequest):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=venues.csv'
+
+    # create a csv writer
+    writer = csv.writer(response)
+
+    # designate the model
+    venues = Venue.objects.all()
+
+    # add column heading to csv file
+    writer.writerow(['Venue name', 'Address', 'Zipcode', 'Phone', 'Web address', 'Email address'])
+
+    # loop through the outputs
+    for venue in venues:
+        writer.writerow([venue.name, venue.address, venue.zip_code, venue.phone, venue.web, venue.email_address])
+
+    return response
 
 
 def venue_text(request: HttpRequest):
@@ -17,11 +38,13 @@ def venue_text(request: HttpRequest):
     venues = Venue.objects.all()
     lines = []
     for (indx, venue) in enumerate(venues):
-        lines.append(f"\n\n{indx+1}. {venue.name}\n{venue.address}\n{venue.zip_code}\n{venue.web}\n{venue.email_address}")
+        lines.append(
+            f"\n\n{indx + 1}. {venue.name}\n{venue.address}\n{venue.zip_code}\n{venue.web}\n{venue.email_address}")
 
     # write to text files
     response.writelines(lines)
     return response
+
 
 def delete_venue(request: HttpRequest, venue_id):
     venue = Venue.objects.get(pk=venue_id)
@@ -29,11 +52,13 @@ def delete_venue(request: HttpRequest, venue_id):
 
     return redirect('venue-list')
 
+
 def delete_event(request: HttpRequest, event_id):
     event = Event.objects.get(pk=event_id)
     event.delete()
 
     return redirect('event-list')
+
 
 def update_event(request: HttpRequest, event_id):
     event = Event.objects.get(pk=event_id)
@@ -48,6 +73,7 @@ def update_event(request: HttpRequest, event_id):
         'event_form': event_form
     })
 
+
 def add_event(request: HttpRequest):
     submitted = False
 
@@ -61,7 +87,8 @@ def add_event(request: HttpRequest):
         if "submitted" in request.GET:
             submitted = True
 
-    return render(request, 'events/add_event.html', { "form": form, "submitted": submitted })
+    return render(request, 'events/add_event.html', {"form": form, "submitted": submitted})
+
 
 def update_venue(request: HttpRequest, venue_id):
     venue = Venue.objects.get(pk=venue_id)
@@ -78,7 +105,6 @@ def update_venue(request: HttpRequest, venue_id):
 
 
 def search_venues(request: HttpRequest):
-    
     if request.method == 'POST':
         searched = request.POST['searched']
         venues = Venue.objects.filter(name__contains=searched)
@@ -89,6 +115,7 @@ def search_venues(request: HttpRequest):
         })
     else:
         return render(request, 'events/search_venues.html')
+
 
 def show_venue(requet: HttpRequest, venue_id: int):
     venue = Venue.objects.get(pk=venue_id)
@@ -102,10 +129,11 @@ def list_venues(request: HttpRequest):
     # order by randomly
     # ?
     all_venues = Venue.objects.all().order_by('-id')
-    
+
     return render(request, 'events/venues.html', {
         'venue_list': all_venues
     })
+
 
 def add_venue(request: HttpRequest):
     submitted = False
@@ -121,7 +149,8 @@ def add_venue(request: HttpRequest):
             submitted = True
 
     forms = VenueForms()
-    return render(request, 'events/add_venue.html', { "forms": forms, "submitted": submitted })
+    return render(request, 'events/add_venue.html', {"forms": forms, "submitted": submitted})
+
 
 def all_events(request: HttpRequest):
     """event list"""
@@ -132,7 +161,7 @@ def all_events(request: HttpRequest):
     })
 
 
-def home(request: HttpRequest, year=datetime.now().year, 
+def home(request: HttpRequest, year=datetime.now().year,
          month=datetime.now().strftime('%B')):
     """
         {} -> is a context dictionary
