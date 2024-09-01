@@ -2,7 +2,30 @@ from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 
+
+def register_user(request: HttpRequest):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        print('form ok')
+        if form.is_valid():
+            print('form is valid. ok')
+            form.save()
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=password)
+            print('user: ', user)
+            login(request, user)
+            messages.success(request, 'Account is created successfully!')
+            return redirect('home')
+    else:
+        print('hello-3')
+        form = UserCreationForm()
+
+    return render(request, 'authenticate/register_user.html', {
+        'form': form
+    })
 
 def logout_user(request: HttpRequest):
     logout(request)
