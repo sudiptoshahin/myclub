@@ -4,3 +4,4 @@ virt/
 myclub_website/events/__pycache__/
 myclub_website/events/migrations/__pycache__/
 myclub_website/myclub_website/__pycache__/
+myclub_website/members/__pycache__/

@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% if user.is_authenticated %}
+
 <h1>Add Events</h1>
 <hr><br><br>
 
@@ -14,6 +16,12 @@
 
         <input type="submit" value="Submit" class="btn btn-secondary">
     </form>
+{% endif %}
+
+
+{% else %}
+<h1>You must be logged in to view this page. Please logged in</h1>
+
 {% endif %}
 
 

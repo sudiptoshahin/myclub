@@ -2,16 +2,20 @@
 
 {% block content %}
 
-<h1>Update Events</h1>
-<hr><br><br>
+{% if user.is_authenticated %}
+    <h1>Update Events</h1>
+    <hr><br><br>
 
-<form action="" method="POST">
-    {% csrf_token %}
+    <form action="" method="POST">
+        {% csrf_token %}
 
-    {{ event_form.as_p }}
+        {{ event_form.as_p }}
 
-    <input type="submit" value="Submit" class="btn btn-secondary">
-</form>
+        <input type="submit" value="Submit" class="btn btn-secondary">
+    </form>
+{% else %}
+    <h1>You must be logged in!</h1>
+{% endif %}
 
 
 {% endblock %}

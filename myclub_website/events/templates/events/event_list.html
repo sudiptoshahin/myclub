@@ -29,11 +29,12 @@
             </li>
         </ul>
     </div>
-    <div class="card-footer">
-        <a href="{% url 'update-event' event.id %}" class="btn btn-secondary">Update</a>
-        <a href="{% url 'delete-event' event.id %}" class="btn btn-danger">Delete</a>
-
-    </div>
+    {% if user.is_authenticated %}
+        <div class="card-footer">
+            <a href="{% url 'update-event' event.id %}" class="btn btn-secondary">Update</a>
+            <a href="{% url 'delete-event' event.id %}" class="btn btn-danger">Delete</a>
+        </div>
+    {% endif %}
 </div>
 {% endfor %}
 {% endblock %}

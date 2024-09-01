@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% if user.is_authenticated %}
 <h1>Update venue....</h1><br>
 <!-- {{ venue }} -->
   <!-- {{venue_form.as_p}} -->
@@ -11,5 +12,10 @@
         <br>
         <input type="submit" value="Update" class="btn btn-secondary">
    </form>
+
+{% else %}
+   <h1>You must be logged in.!</h1>
+
+{% endif %}
 
 {% endblock %}
