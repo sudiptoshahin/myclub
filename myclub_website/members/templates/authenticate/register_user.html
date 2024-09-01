@@ -7,14 +7,16 @@
     <p>There was an error.</p>
 {% endif %}
 
-<h1>Register User</h1>
-<br><hr>
+<div class="shadow-md p-4 mb-5 bg-body rounded">
+    <h1>Register User</h1>
+    <br><hr>
 
-<form action="" method="post">
-    {% csrf_token %} 
+    <form action="" method="post">
+        {% csrf_token %} 
 
-    {{ form.as_p }}
-    <input class="btn btn-primary" type="submit" value="Register">
-</form>
+        {{ form.as_p }}
+        <input class="btn btn-primary" type="submit" value="Register">
+    </form>
+</div>
 
 {% endblock %}

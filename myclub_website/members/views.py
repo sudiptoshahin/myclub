@@ -3,11 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from .forms import RegisterUserForm
 
 
 def register_user(request: HttpRequest):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegisterUserForm(request.POST)
         print('form ok')
         if form.is_valid():
             print('form is valid. ok')
@@ -21,7 +22,7 @@ def register_user(request: HttpRequest):
             return redirect('home')
     else:
         print('hello-3')
-        form = UserCreationForm()
+        form = RegisterUserForm()
 
     return render(request, 'authenticate/register_user.html', {
         'form': form
