@@ -3,6 +3,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
+
+def logout_user(request: HttpRequest):
+    logout(request)
+    messages.success(request, "You were logging out")
+    return redirect('home')
+
 def login_user(request: HttpRequest):
 
     if request.method == 'POST':
