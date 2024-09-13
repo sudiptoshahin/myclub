@@ -20,6 +20,9 @@ from reportlab.lib.pagesizes import letter
 from django.core.paginator import Paginator
 from django.contrib import messages
 
+# get the django's user model
+from django.contrib.auth.models import User
+
 def venue_pdf(request: HttpRequest):
     # create byte stream buffer
     buf = io.BytesIO()
@@ -182,9 +185,11 @@ def search_venues(request: HttpRequest):
 
 def show_venue(requet: HttpRequest, venue_id: int):
     venue = Venue.objects.get(pk=venue_id)
+    venue_owner = User.objects.get(pk=venue.owner)
 
     return render(requet, 'events/show_venue.html', {
-        'venue': venue
+        'venue': venue,
+        'venue_owner': venue_owner
     })
 
 
