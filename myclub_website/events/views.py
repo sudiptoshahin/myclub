@@ -23,6 +23,35 @@ from django.contrib import messages
 # get the django's user model
 from django.contrib.auth.models import User
 
+
+def search_events(request: HttpRequest):
+    if request.method == 'POST':
+        searched = request.POST['searched']
+        events = Event.objects.filter(name__contains=searched)
+
+        return render(request, 'events/search_events.html', {
+            'searched': searched,
+            'events': events
+        })
+    else:
+        return render(request, 'events/search_events.html')
+
+
+def my_events(request: HttpRequest):
+
+    if request.user.is_authenticated:
+        me = request.user.id
+        events = Event.objects.filter(attendees=me)
+
+        return render(request, 'events/my_events.html', {
+            'events': events
+        })
+    else:
+        messages.success(request, "You are not authorized to view this page. \
+                         Please login!")
+        return redirect('home')
+    
+
 def venue_pdf(request: HttpRequest):
     # create byte stream buffer
     buf = io.BytesIO()
@@ -46,8 +75,7 @@ def venue_pdf(request: HttpRequest):
         lines.append(venue.email_address)
         lines.append("==========================")
 
-
-    #loop
+    # loop
     for line in lines:
         textob.textLine(line)
 
@@ -72,11 +100,13 @@ def venue_csv(request: HttpRequest):
     venues = Venue.objects.all()
 
     # add column heading to csv file
-    writer.writerow(['Venue name', 'Address', 'Zipcode', 'Phone', 'Web address', 'Email address'])
+    writer.writerow(['Venue name', 'Address', 'Zipcode', 'Phone',
+                     'Web address', 'Email address'])
 
     # loop through the outputs
     for venue in venues:
-        writer.writerow([venue.name, venue.address, venue.zip_code, venue.phone, venue.web, venue.email_address])
+        writer.writerow([venue.name, venue.address, venue.zip_code,
+                         venue.phone, venue.web, venue.email_address])
 
     return response
 
@@ -90,7 +120,8 @@ def venue_text(request: HttpRequest):
     lines = []
     for (indx, venue) in enumerate(venues):
         lines.append(
-            f"\n\n{indx + 1}. {venue.name}\n{venue.address}\n{venue.zip_code}\n{venue.web}\n{venue.email_address}")
+            f"\n\n{indx + 1}. {venue.name}\n{venue.address}\
+                \n{venue.zip_code}\n{venue.web}\n{venue.email_address}")
 
     # write to text files
     response.writelines(lines)
@@ -111,7 +142,8 @@ def delete_event(request: HttpRequest, event_id):
         messages.success(request, 'Event is deleted successfully!')
         return redirect('event-list')
     else:
-        messages.success(request, 'You are not authorize to delete this events.')
+        messages.success(request, 'You are not authorize to \
+                         delete this events.')
         return redirect('event-list')
 
 
@@ -153,7 +185,10 @@ def add_event(request: HttpRequest):
         if "submitted" in request.GET:
             submitted = True
 
-    return render(request, 'events/add_event.html', {"form": form, "submitted": submitted})
+    return render(request, 'events/add_event.html', {
+        "form": form,
+        "submitted": submitted
+    })
 
 
 def update_venue(request: HttpRequest, venue_id):
@@ -226,7 +261,10 @@ def add_venue(request: HttpRequest):
             submitted = True
 
     forms = VenueForms()
-    return render(request, 'events/add_venue.html', {"forms": forms, "submitted": submitted})
+    return render(request, 'events/add_venue.html', {
+        "forms": forms,
+        "submitted": submitted
+    })
 
 
 def all_events(request: HttpRequest):
