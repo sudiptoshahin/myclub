@@ -10,10 +10,12 @@
             <p><a href="{% url 'show-venue' venue.id %}">{{ venue }}</a></p>
         </td>
         {% if user.is_authenticated %}
-        <td align="right">
-            <a href="{% url 'update-venue' venue.id %}" class="btn btn-outline-primary fw-semibold text-dark">Update</a>
-            <a href="{% url 'delete-venue' venue.id %}" class="btn btn-outline-danger border fw-semibold text-white">Delete</a>
-        </td>
+            {% if venue.owner == user.id %}
+                <td align="right">
+                    <a href="{% url 'update-venue' venue.id %}" class="btn btn-outline-primary fw-semibold text-dark">Update</a>
+                    <a href="{% url 'delete-venue' venue.id %}" class="btn btn-outline-danger border fw-semibold text-white">Delete</a>
+                </td>
+            {% endif %}
         {% endif %}
     </tr>
     {% endfor %}

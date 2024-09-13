@@ -18,6 +18,7 @@ from reportlab.lib.pagesizes import letter
 
 # pagination
 from django.core.paginator import Paginator
+from django.contrib import messages
 
 def venue_pdf(request: HttpRequest):
     # create byte stream buffer
@@ -102,9 +103,13 @@ def delete_venue(request: HttpRequest, venue_id):
 
 def delete_event(request: HttpRequest, event_id):
     event = Event.objects.get(pk=event_id)
-    event.delete()
-
-    return redirect('event-list')
+    if request.user == event.manager:
+        event.delete()
+        messages.success(request, 'Event is deleted successfully!')
+        return redirect('event-list')
+    else:
+        messages.success(request, 'You are not authorize to delete this events.')
+        return redirect('event-list')
 
 
 def update_event(request: HttpRequest, event_id):
@@ -127,11 +132,16 @@ def add_event(request: HttpRequest):
     if request.method == 'POST':
         if request.user.is_superuser:
             form = EventFormAdmin(request.POST)
+            if form.is_valid:
+                form.save()
+                return HttpResponseRedirect('event-list')
         else:
             form = EventForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('event-list')
+            if form.is_valid():
+                event_form = form.save(commit=False)
+                event_form.manager = request.user
+                event_form.save()
+                return redirect('event-list')
     else:
         if request.user.is_superuser:
             form = EventFormAdmin()
@@ -216,7 +226,7 @@ def add_venue(request: HttpRequest):
 
 def all_events(request: HttpRequest):
     """event list"""
-    event_list = Event.objects.all().order_by('event_date')
+    event_list = Event.objects.all().order_by('-event_date')
 
     return render(request, 'events/event_list.html', {
         "event_list": event_list
