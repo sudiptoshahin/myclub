@@ -193,7 +193,8 @@ def add_event(request: HttpRequest):
 
 def update_venue(request: HttpRequest, venue_id):
     venue = Venue.objects.get(pk=venue_id)
-    venue_form = VenueForms(request.POST or None, instance=venue)
+    venue_form = VenueForms(request.POST or None, request.FILES or None,
+                            instance=venue)
 
     if venue_form.is_valid():
         venue_form.save()
