@@ -11,7 +11,7 @@
         {% if submitted %}
             <h4>Venue submitted successfully</h4>
         {% else %}
-            <form action="" method="POST">
+            <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 {{ forms.as_p }}

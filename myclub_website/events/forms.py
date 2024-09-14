@@ -52,7 +52,7 @@ class VenueForms(ModelForm):
     class Meta:
         model = Venue
         # fields = "__all__"
-        fields = ("name", "address", "zip_code", "phone", "web", "email_address")
+        fields = ("name", "address", "zip_code", "phone", "web", "email_address", "venue_image")
 
         labels = {
             'name': '',
@@ -60,7 +60,8 @@ class VenueForms(ModelForm):
             'zip_code': '',
             'phone': '',
             'web': '',
-            'email_address': ''
+            'email_address': '',
+            "venue_image": ''
         }
 
         widgets = {

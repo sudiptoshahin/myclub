@@ -9,7 +9,17 @@
     <br><br>
     
     {{ cal|safe }}
-    <br><br><br>
+    <br><br>
+
+    <h2>Events for this months</h2>
+    {% if event_list %}
+        {% for event in event_list %}
+            <h5><b>{{ event }}</b> | {{ event.event_date }}</h5>
+        {% endfor %}
+    {% else %}
+        <h4>___No events for this month___</h4>
+    {% endif %}
+
     Copyright (c) {{current_year}}
     
 </center>

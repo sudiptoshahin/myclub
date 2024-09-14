@@ -251,7 +251,7 @@ def add_venue(request: HttpRequest):
     submitted = False
 
     if request.method == "POST":
-        form = VenueForms(request.POST)
+        form = VenueForms(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('/add-venue?submitted=True')
@@ -295,6 +295,12 @@ def home(request: HttpRequest, year=datetime.now().year,
     now = datetime.now()
     current_year = now.year
 
+    # Query the events model with dates
+    event_list = Event.objects.filter(
+        event_date__year=year,
+        event_date__month=7
+    )
+
     # get current time
     time = now.strftime('%I:%M %p')
 
@@ -305,5 +311,6 @@ def home(request: HttpRequest, year=datetime.now().year,
         "month_number": month_number,
         "cal": cal,
         "current_year": current_year,
-        "time": time
+        "time": time,
+        "event_list": event_list
     })
