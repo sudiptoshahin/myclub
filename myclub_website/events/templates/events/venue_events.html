@@ -1,0 +1,19 @@
+{% extends 'events/base.html' %}
+
+{% block content %}
+
+<h1><strong>{{ venue_name }}</strong> Events</h1>
+<hr />
+<br />
+{% if venue_events %}
+    {% for event in venue_events %}
+        <h5 class='py-2'>
+            <a href="{%  url  'update-event' event.id %}">{{ event.name }}</a>
+        </h5>
+    {% endfor %}
+{% else %}
+    <h3>No events at this moment!</h3>
+        
+{% endif %}
+
+{% endblock %}

@@ -1,21 +1,53 @@
-{% extends 'events/base.html' %}
-
-{% block content %}
+{% extends 'events/base.html' %} {% block content %}
 <div class="card my-3">
-    <h5 class="card-header">Venue</h5>
-    <div class="card-body">
-        <h5 class="card-title">{{ venue }}</h5>
-        <ul>
-            <li><strong>Address: </strong>{{ venue.address }}</li>
-            <li><strong>Zip Code: </strong><a href="">{{ venue.zip_code }}</a></li>
-            <li><strong>Contact: </strong>{{ venue.phone }}</li>
-            <li><strong>Email address: </strong>{{ venue.email_address }}</li>
-            <li><strong>Website: </strong><a href="{{ venue.web }}">{{ venue.web }}</a></li>
-            <li><strong>Owner: </strong>{{ venue_owner }}</li>
-        </ul>
-        <img src="{{ venue.venue_image.url }}" class="img-fluid" 
-        alt="Responsive image" height="280px">
-    </div>
+  <h5 class="card-header">Venue</h5>
+  <div class="card-body">
+    <h5 class="card-title">{{ venue }}</h5>
+    <ul>
+      <li><strong>Address: </strong>{{ venue.address }}</li>
+      <li><strong>Zip Code: </strong><a href="">{{ venue.zip_code }}</a></li>
+      <li><strong>Contact: </strong>{{ venue.phone }}</li>
+      <li><strong>Email address: </strong>{{ venue.email_address }}</li>
+      <li>
+        <strong>Website: </strong><a href="{{ venue.web }}">{{ venue.web }}</a>
+      </li>
+      <li><strong>Owner: </strong>{{ venue_owner }}</li>
+    </ul>
+    <br>
+    <h2>Events</h2>
+    {% if events %}
+        <ol type='1'>
+            {% for event in events %}
+                <li>{{ event.name }}</li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <h5>Sorry no events at this moment!</h5>
+    {% endif %}
+    {% if venue.venue_image %}
+    {% comment %} <p>{{venue.venue_image.url}}</p> {% endcomment %}
+    <img
+      src="{{ venue.venue_image.url }}"
+      class="img-fluid"
+      alt="Responsive image"
+      height="280px"
+    />
+    {% else %}
+    <form action="" method="POST" enctype="multipart/formdata">
+      {% csrf_token %}
+      <div class="input-group">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="venue_image" name='venue_image' />
+          <label class="custom-file-label" for="venue_image"
+            >Choose file</label
+          >
+        </div>
+      </div>
+      <input type="submit" value="submit" class="btn btn-secondary my-2">
+
+    </form>
+    {% endif %}
+  </div>
 </div>
 
 {% endblock %}

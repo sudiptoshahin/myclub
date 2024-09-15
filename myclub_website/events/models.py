@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -48,6 +49,23 @@ class Event(models.Model):
                                 on_delete=models.SET_NULL)
     description = models.TextField(blank=True)
     attendees = models.ManyToManyField(MyClubUser, blank=True)
+    approved = models.BooleanField('Approved', default=False)
     
     def __str__(self) -> str:
         return str(self.name)
+    
+    @property
+    def Days_till(self):
+        today = date.today()
+        days_till = self.event_date.date() - today
+        days_till_stripped = str(days_till).split(',', 1)[0]
+        return days_till_stripped
+    
+    @property
+    def Is_past(self):
+        today = date.today()
+        if self.event_date.date() < today:
+            thing = "past"
+        else:
+            thing = "future"
+        return thing

@@ -23,6 +23,62 @@ from django.contrib import messages
 # get the django's user model
 from django.contrib.auth.models import User
 
+from django.conf import settings
+
+
+def venue_events(request: HttpRequest, venue_id):
+    # print(f"Type: {type(venue_id)} venue id: {venue_id}")
+    venue = Venue.objects.get(id=venue_id)
+
+    venue_events = venue.event_set.all()
+
+    # print('venue_events: ', venue_events)
+
+    return render(request, 'events/venue_events.html', {
+        'venue_name': venue.name,
+        'venue_events': venue_events
+    })
+
+
+def admin_approval(request: HttpRequest):
+
+    event_count = Event.objects.all().count()
+    venue_count = Venue.objects.all().count()
+    user_count = User.objects.all().count()
+
+    venue_list = Venue.objects.all()
+    event_list = Event.objects.all().order_by('-event_date')
+
+    if request.user.is_superuser:
+
+        if request.method == 'POST':
+
+            id_list = request.POST.getlist('boxes')
+            # print(id_list)
+
+            # uncheck all events
+            event_list.update(approved=False)
+
+            for id in id_list:
+                # __________update database___________________________
+                Event.objects.filter(pk=int(id)).update(approved=True)
+
+            messages.success(request, 'Event are approved successfully!')
+            return redirect('event-list')
+
+        else:
+            return render(request, 'events/admin_approval.html', {
+                        'event_list': enumerate(event_list),
+                        'event_count': event_count,
+                        'venue_count': venue_count,
+                        'user_count': user_count,
+                        'venue_list': enumerate(venue_list)
+                    })
+      
+    else:
+        messages.success(request, 'You are not authorized to view this page.')
+        return redirect('home')
+
 
 def search_events(request: HttpRequest):
     if request.method == 'POST':
@@ -169,7 +225,7 @@ def add_event(request: HttpRequest):
             form = EventFormAdmin(request.POST)
             if form.is_valid:
                 form.save()
-                return HttpResponseRedirect('event-list')
+                return redirect('event-list')
         else:
             form = EventForm(request.POST)
             if form.is_valid():
@@ -219,13 +275,22 @@ def search_venues(request: HttpRequest):
         return render(request, 'events/search_venues.html')
 
 
-def show_venue(requet: HttpRequest, venue_id: int):
+def show_venue(request: HttpRequest, venue_id: int):
     venue = Venue.objects.get(pk=venue_id)
     venue_owner = User.objects.get(pk=venue.owner)
 
-    return render(requet, 'events/show_venue.html', {
+    events = venue.event_set.all()
+
+    if request.method == 'POST':
+        venue_image = request.POST.get('venue_image')
+        Venue.objects.filter(pk=venue_id).update(
+            venue_image=f"{settings.MEDIA_ROOT}/{venue_image}",
+        )        
+  
+    return render(request, 'events/show_venue.html', {
         'venue': venue,
-        'venue_owner': venue_owner
+        'venue_owner': venue_owner,
+        'events': events
     })
 
 

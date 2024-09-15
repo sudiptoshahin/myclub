@@ -1,0 +1,101 @@
+{% extends 'events/base.html' %} {% block content %}
+<h1>Admin Event Approvals Portal</h1>
+<hr />
+<br /><br />
+
+<div class='w-100 bg-secondary d-flex align-items-center justify-content-between'>
+    <div class="card" style="width: 18rem;">
+        <div class="card-body text-center">
+          <h2 class="card-title">Event</h2>
+          <h5 class="card-subtitle mb-2 text-muted">Event Count</h5>
+          <h2 class="card-text">{{ event_count }}</h2>
+        </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+        <div class="card-body text-center">
+          <h2 class="card-title">Venue</h2>
+          <h5 class="card-subtitle mb-2 text-muted">Venue Count</h5>
+          <h2 class="card-text">{{ venue_count }}</h2>
+        </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+        <div class="card-body text-center">
+          <h2 class="card-title">User</h2>
+          <h5 class="card-subtitle mb-2 text-muted">User Count</h5>
+          <h2 class="card-text">{{ user_count }}</h2>
+        </div>
+    </div>
+</div>
+
+{% comment %} admin approvals {% endcomment %}
+<form action="" method="POST">
+{% csrf_token %}
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Event name</th>
+      <th scope="col">Approved</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for idx, event in event_list %}
+    <tr>
+      <th scope="row">{{ idx }}</th>
+      <td>
+        <a class='underline' href={% url 'update-event' event.id %}>{{ event.name }}</a>
+      </td>
+      <td>
+        {% if event.approved %}
+            <div class='form-check'>
+                <input class='form-check-input' type='checkbox'
+                checked='checked' value={{event.id}}
+                name='boxes' />
+            </div>
+        {% else %}
+            <div class='form-check'>
+                <input class='form-check-input' type='checkbox' 
+                value={{event.id}}
+                name='boxes' />
+            </div>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<br>
+
+<button class='btn btn-secondary' type="submit">Update approval</button>
+</form>
+
+{% comment %} end of admin approvals {% endcomment %}
+<br> <br>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Venue name</th>
+        <th scope="col">Events</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for idx, venue in venue_list %}
+      <tr>
+        <th scope="row">{{ idx }}</th>
+        <td>
+          <a class='underline' href={% url 'show-venue' venue.id %}>{{ venue.name }}</a>
+        </td>
+        <td>
+            <a class="btn btn-primary" href={% url 'venue-events' venue.id %}>Event List</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
